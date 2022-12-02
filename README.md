@@ -34,5 +34,5 @@ It also includes an End-to-End test from the template which will need to get muc
 - Press ▷ to run the launch config (F5).
 - If you want to debug the server as well, use the launch configuration `Attach to Server`
 - In the Extension Development Host instance of VSCode, open a document in 'tealish' language mode (a .tl file should open in this mode already)
-  - Type `Txn` or `Global` to see completions based on the tealish langspec and try any other TEAL opcode to see the server's compeltion and docs from langspec.json.
+- Type `Txn` or `Global` to see completions based on the tealish langspec and try any other TEAL opcode to see the server's compeltion and docs from langspec.json.
 
