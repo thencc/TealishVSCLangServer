@@ -1,14 +1,14 @@
 {
-  "name": "lsp-sample",
-  "description": "A language server example",
-  "author": "Microsoft Corporation",
+  "name": "tealish-language-server",
+  "description": "A language server for Tealish",
+  "author": "NCC",
   "license": "MIT",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/vscode-extension-samples"
+    "url": "https://github.com/thencc/TealishVSCLangServer"
   },
-  "publisher": "vscode-samples",
+  "publisher": "thencc",
   "categories": [],
   "keywords": [
     "multi-root ready"
