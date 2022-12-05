@@ -56,7 +56,6 @@ export class TealishSignatureHelpProvider implements SignatureHelpProvider {
 					//
 					// which should probably be referencing B and A?
 
-
 					possibleSigs.push(
 						{
 									label: `${op.Name}(${op.Args}) : Returns ${op.Returns || 'null'}`,
