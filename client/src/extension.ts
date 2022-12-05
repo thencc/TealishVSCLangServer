@@ -18,6 +18,8 @@ import {
 
 import { TealishSpec } from './tealishlangspec';
 
+import { TealishSignatureHelpProvider } from './SigHelpProvider';
+
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
@@ -133,6 +135,14 @@ export function activate(context: ExtensionContext) {
 
 
 	context.subscriptions.push(tealishCompletionProvider, specCompletionProvider, objectCompletionProvider);
+
+
+	// try some client-side signature help
+	context.subscriptions.push(
+        languages.registerSignatureHelpProvider(
+            'tealish', new TealishSignatureHelpProvider(), '(', ','));
+
+
 
 	// The server is implemented in node
 	const serverModule = context.asAbsolutePath(

@@ -19,6 +19,7 @@ import {
 
 import * as FullLangSpec from './langspec.json';
 
+
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 const connection = createConnection(ProposedFeatures.all);
@@ -53,6 +54,10 @@ connection.onInitialize((params: InitializeParams) => {
 			// Tell the client that this server supports code completion.
 			completionProvider: {
 				resolveProvider: true
+			},
+
+			signatureHelpProvider: {
+				triggerCharacters: [ '(' ]
 			}
 		}
 	};
@@ -183,6 +188,8 @@ connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode
 	connection.console.log('We received an file change event');
 });
+
+// connection.onSignatureHelp(handler: )
 
 
 
