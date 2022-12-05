@@ -17,6 +17,7 @@ import {
 } from 'vscode-languageclient/node';
 
 import { TealishSpec } from './tealishlangspec';
+import * as TealSpec  from './langspec.json';
 
 import { TealishSignatureHelpProvider } from './SigHelpProvider';
 
