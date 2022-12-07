@@ -1,7 +1,7 @@
 {
-  "name": "tealish-language-server",
+  "name": "tealish-language-extension",
   "description": "A language server for Tealish",
-  "author": "NCC",
+  "author": "The New Computer Corporation",
   "license": "MIT",
   "version": "1.0.0",
   "repository": {
@@ -29,6 +29,13 @@
         ]
       }
     ],
+    "grammars": [
+      {
+        "language": "tealish",
+        "scopeName": "source.tealish",
+        "path": "./syntaxes/tealish.json"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "Tealish language server configuration",
@@ -43,11 +50,11 @@
           "scope": "window",
           "type": "string",
           "enum": [
-            "off",
+            "on",
             "messages",
             "verbose"
           ],
-          "default": "off",
+          "default": "on",
           "description": "Traces the communication between VS Code and the language server."
         }
       }

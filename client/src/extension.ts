@@ -6,7 +6,13 @@ import {
 	TextDocument,
 	CompletionItem,
 	CompletionItemKind,
-	Position
+	Position,
+	ProviderResult,
+	Definition,
+	LocationLink,
+	Range,
+	Location
+
 } from 'vscode';
 
 import {
@@ -22,6 +28,7 @@ import * as TealSpec  from './langspec.json';
 import { TealishSignatureHelpProvider } from './SigHelpProvider';
 
 let client: LanguageClient;
+
 
 export function activate(context: ExtensionContext) {
 
@@ -135,7 +142,43 @@ export function activate(context: ExtensionContext) {
 	);
 
 
-	context.subscriptions.push(tealishCompletionProvider, specCompletionProvider, objectCompletionProvider);
+	const definitionProvider = languages.registerDefinitionProvider('tealish', {
+		provideDefinition(document, position, token): ProviderResult<Definition | LocationLink[]> {
+
+			//console.log('provide definition: ', position, token);
+
+			const wordRange = document.getWordRangeAtPosition(position);
+
+			// expand position to current symbol:
+			const selectedLine = document.lineAt(position.line);
+
+			const symbol = selectedLine.text.substring(wordRange.start.character, wordRange.end.character);
+
+			//console.log('found symbol |' + symbol + '|');
+
+			for (let i = 0; i < document.lineCount; i++) {
+				const linePrefix = document.lineAt(i);
+
+				//console.log(linePrefix.text);
+				//console.log(linePrefix.text.includes(`block ${symbol}`));
+
+				if (
+					linePrefix.text.includes(`int ${symbol}`) ||
+					linePrefix.text.includes(`const ${symbol}`) ||
+					linePrefix.text.includes(`bytes ${symbol}`) ||
+					linePrefix.text.includes(`bytes ${symbol}`) ||
+					linePrefix.text.includes(`func ${symbol}`) ||
+					linePrefix.text.includes(`struct ${symbol}`) ||
+					linePrefix.text.includes(`block ${symbol}`)
+				) {
+					return new Location(document.uri, new Position(i, linePrefix.text.indexOf(symbol)));
+				}
+			}
+
+		},
+	});
+
+	context.subscriptions.push(definitionProvider, tealishCompletionProvider, specCompletionProvider, objectCompletionProvider);
 
 
 	// try some client-side signature help
@@ -183,6 +226,7 @@ export function activate(context: ExtensionContext) {
 	);
 
 	// Start the client. This will also launch the server
+	console.log('starting client');
 	client.start();
 }
 

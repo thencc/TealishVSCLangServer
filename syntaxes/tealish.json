@@ -1,0 +1,100 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "tealish",
+    "scopeName": "source.tealish",
+    "patterns": [
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#string"
+        },
+        {
+            "include": "#number"
+        },
+        {
+            "include": "#literals"
+        },
+        {
+            "include": "#labels"
+        },
+        {
+            "include": "#keyword"
+        },
+        {
+            "include": "#storage"
+        },
+        {
+            "include": "#support"
+        }
+    ],
+    "repository": {
+        "comments": {
+            "name": "comment.line.number-sign.tealish",
+            "begin": "#",
+            "end": "$"
+        },
+        "literals": {
+            "patterns": [
+                {
+                    "name": "variable.parameter.tealish",
+                    "match": "\\b(unknown|pay|keyreg|acfg|axfer|afrz|appl|NoOp|OptIn|CloseOut|ClearState|UpdateApplication|DeleteApplication|Secp256k1|Secp256r1|Sender|Fee|FirstValid|FirstValidTime|LastValid|Note|Lease|Receiver|Amount|CloseRemainderTo|VotePK|SelectionPK|VoteFirst|VoteLast|VoteKeyDilution|Type|TypeEnum|XferAsset|AssetAmount|AssetSender|AssetReceiver|AssetCloseTo|GroupIndex|TxID|ApplicationID|OnCompletion|ApplicationArgs|NumAppArgs|Accounts|NumAccounts|ApprovalProgram|ClearStateProgram|RekeyTo|ConfigAsset|ConfigAssetTotal|ConfigAssetDecimals|ConfigAssetDefaultFrozen|ConfigAssetUnitName|ConfigAssetName|ConfigAssetURL|ConfigAssetMetadataHash|ConfigAssetManager|ConfigAssetReserve|ConfigAssetFreeze|ConfigAssetClawback|FreezeAsset|FreezeAssetAccount|FreezeAssetFrozen|Assets|NumAssets|Applications|NumApplications|GlobalNumUint|GlobalNumByteSlice|LocalNumUint|LocalNumByteSlice|ExtraProgramPages|Nonparticipation|Logs|NumLogs|CreatedAssetID|CreatedApplicationID|LastLog|StateProofPK|MinTxnFee|MinBalance|MaxTxnLife|ZeroAddress|GroupSize|LogicSigVersion|Round|LatestTimestamp|CurrentApplicationID|CreatorAddress|CurrentApplicationAddress|GroupID|OpcodeBudget|CallerApplicationID|CallerApplicationAddress|URLEncoding|StdEncoding|JSONString|JSONUint64|JSONObject|AssetBalance|AssetFrozen|AssetTotal|AssetDecimals|AssetDefaultFrozen|AssetUnitName|AssetName|AssetURL|AssetMetadataHash|AssetManager|AssetReserve|AssetFreeze|AssetClawback|AssetCreator|AppApprovalProgram|AppClearStateProgram|AppGlobalNumUint|AppGlobalNumByteSlice|AppLocalNumUint|AppLocalNumByteSlice|AppExtraProgramPages|AppCreator|AppAddress|AcctBalance|AcctMinBalance|AcctAuthAddr)\\b"
+                }
+            ]
+        },
+        "keyword": {
+            "patterns": [
+                {
+                    "name": "keyword.control.flow.tealish",
+                    "match": "\\b(block|end|if|elif|else|switch|func|return|jump|teal|inner_txn|inner_group|for|while|struct)\\b"
+                }
+            ]
+        },
+        "storage": {
+            "patterns": [
+                {
+                    "name": "storage.type.tealish",
+                    "match": "\\b(int|bytes|box)\\b"
+                }
+            ]
+        },
+        "support": {
+            "patterns": [
+                {
+                    "name": "support.class.tealish",
+                    "match": "\\b(Global|Txn|Gtxn)\\b"
+                },
+                {
+                    "name": "support.function.builtin.tealish",
+                    "match": "\\b(exit|assert)\\b"
+                },
+                {
+                    "name": "support.function.tealish",
+                    "match": "\\b(\\w+)\\("
+                }
+            ]
+        },
+        "string": {
+            "patterns": [
+                {
+                    "name": "string.quoted.single",
+                    "begin": "'",
+                    "end": "'"
+                },
+                {
+                    "name": "string.quoted.double",
+                    "begin": "\"",
+                    "end": "\""
+                }
+            ]
+        },
+        "number": {
+            "patterns": [
+                {
+                    "match": "\\b[0-9]+\\b\\.{0,1}",
+                    "name": "constant.numeric"
+                }
+            ]
+        }
+    }
+}

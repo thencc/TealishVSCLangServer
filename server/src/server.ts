@@ -10,7 +10,12 @@ import {
 	CompletionItemKind,
 	TextDocumentPositionParams,
 	TextDocumentSyncKind,
-	InitializeResult
+	InitializeResult,
+	TextDocumentIdentifier,
+	Definition,
+	Location,
+	ServerRequestHandler,
+	HandlerResult
 } from 'vscode-languageserver/node';
 
 import {
@@ -19,6 +24,12 @@ import {
 
 import * as FullLangSpec from './langspec.json';
 
+
+/*
+
+For jump to definition I was thinking of jumping to the user defined functions and blocks, either when CMD + Click on the function usage or from the symbols list (CMD+shift+O).
+
+*/
 
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -32,6 +43,8 @@ let hasWorkspaceFolderCapability = false;
 let hasDiagnosticRelatedInformationCapability = false;
 
 connection.onInitialize((params: InitializeParams) => {
+
+	console.log('server init!');
 	const capabilities = params.capabilities;
 
 	// Does the client support the `workspace/configuration` request?
@@ -56,9 +69,13 @@ connection.onInitialize((params: InitializeParams) => {
 				resolveProvider: true
 			},
 
-			signatureHelpProvider: {
-				triggerCharacters: [ '(' ]
-			}
+			// Tell the client that this server supports go to definition.
+			definitionProvider: true,
+			implementationProvider: true,
+			referencesProvider: true,
+			// signatureHelpProvider: {
+			// 	triggerCharacters: [ '(' ]
+			// }
 		}
 	};
 	if (hasWorkspaceFolderCapability) {
@@ -82,6 +99,7 @@ connection.onInitialized(() => {
 		});
 	}
 });
+
 
 // The example settings
 interface ExampleSettings {
@@ -134,6 +152,9 @@ documents.onDidClose(e => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
+
+	// TBD: must update references here
+
 	validateTextDocument(change.document);
 });
 
@@ -146,39 +167,40 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	const pattern = /\b[A-Z]{2,}\b/g;
 	let m: RegExpExecArray | null;
 
-	let problems = 0;
+	const problems = 0;
 	const diagnostics: Diagnostic[] = [];
-	while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
-		problems++;
-		const diagnostic: Diagnostic = {
-			severity: DiagnosticSeverity.Warning,
-			range: {
-				start: textDocument.positionAt(m.index),
-				end: textDocument.positionAt(m.index + m[0].length)
-			},
-			message: `${m[0]} is all uppercase.`,
-			source: 'ex'
-		};
-		if (hasDiagnosticRelatedInformationCapability) {
-			diagnostic.relatedInformation = [
-				{
-					location: {
-						uri: textDocument.uri,
-						range: Object.assign({}, diagnostic.range)
-					},
-					message: 'Spelling matters'
-				},
-				{
-					location: {
-						uri: textDocument.uri,
-						range: Object.assign({}, diagnostic.range)
-					},
-					message: 'Particularly for names'
-				}
-			];
-		}
-		diagnostics.push(diagnostic);
-	}
+
+	// while ((m = pattern.exec(text)) && problems < settings.maxNumberOfProblems) {
+	// 	problems++;
+	// 	const diagnostic: Diagnostic = {
+	// 		severity: DiagnosticSeverity.Warning,
+	// 		range: {
+	// 			start: textDocument.positionAt(m.index),
+	// 			end: textDocument.positionAt(m.index + m[0].length)
+	// 		},
+	// 		message: `${m[0]} is all uppercase.`,
+	// 		source: 'ex'
+	// 	};
+	// 	if (hasDiagnosticRelatedInformationCapability) {
+	// 		diagnostic.relatedInformation = [
+	// 			{
+	// 				location: {
+	// 					uri: textDocument.uri,
+	// 					range: Object.assign({}, diagnostic.range)
+	// 				},
+	// 				message: 'Spelling matters'
+	// 			},
+	// 			{
+	// 				location: {
+	// 					uri: textDocument.uri,
+	// 					range: Object.assign({}, diagnostic.range)
+	// 				},
+	// 				message: 'Particularly for names'
+	// 			}
+	// 		];
+	// 	}
+	//	diagnostics.push(diagnostic);
+	//}
 
 	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
@@ -231,10 +253,17 @@ connection.onCompletion(
 	}
 );
 
+connection.onImplementation((params): Definition => {
+	console.log('on implementation');
+	return { uri: params.textDocument.uri, range: { start: { line: 3, character: 0}, end: {line: 3, character: 10 }}};
+});
+
 // This handler resolves additional information for the item selected in
 // the completion list.
 connection.onCompletionResolve(
 	(item: CompletionItem): CompletionItem => {
+
+		console.log('resolve');
 
 		FullLangSpec.Ops.forEach((op:any) => {
 
@@ -249,6 +278,27 @@ connection.onCompletionResolve(
 
 	}
 );
+
+connection.onDefinition((params): Definition => {
+	console.log('on def');
+	return { uri: params.textDocument.uri, range: { start: { line: 2, character: 0}, end: {line: 2, character: 10 }}};
+});
+
+// connection.onDe;
+
+
+connection.onTypeDefinition((params): Definition => {
+	console.log('on type def');
+	return { uri: params.textDocument.uri, range: { start: { line: 2, character: 0}, end: {line: 2, character: 10 }}};
+});
+
+connection.onReferences((params): Location[] => {
+	console.log('on refs');
+	return [
+		{ uri: params.textDocument.uri, range: { start: { line: 0, character: 0}, end: {line: 0, character: 10 }}},
+		{ uri: params.textDocument.uri, range: { start: { line: 2, character: 0}, end: {line: 2, character: 20 }}},
+	];
+});
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
