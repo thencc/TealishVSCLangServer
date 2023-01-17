@@ -213,8 +213,6 @@ connection.onDidChangeWatchedFiles(_change => {
 
 // connection.onSignatureHelp(handler: )
 
-
-
 // import opcodes from full langspec
 //
 // omit the ops in opcodesToOmit array to avoid UI confustion, these are either implicit in tealish
